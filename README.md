@@ -1,5 +1,11 @@
 # Swaps_helper
-Параметры в settings.json
+**With love for : https://t.me/swiper_tools**
+
+**Приобрести бота на ZkSync / LayerZero можно тут: https://t.me/swipersoft_bot**
+
+**DEV           : https://t.me/lang_crypto**
+
+# Параметры в settings.json
 
 - **DecryptType** - Метод чем шифровали приватники. Параметры: Flash | Password
 - **0xKey** - ключ от https://0x.org/
