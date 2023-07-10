@@ -1,7 +1,7 @@
 # Swaps_helper
 **With love for : https://t.me/swiper_tools**
 
-**Приобрести бота на ZkSync / LayerZero можно тут: https://t.me/swipersoft_bot**
+**Приобрести бота на ZkSync / LayerZero / Starknet можно тут: https://t.me/swipersoft_bot**
 
 **DEV           : https://t.me/lang_crypto**
 
