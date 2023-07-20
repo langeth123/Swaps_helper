@@ -122,3 +122,12 @@ NATIVE = {
 
 def get_random_number(settings_name: str) -> int:
     return random.randint(SETTINGS[settings_name][0], SETTINGS[settings_name][1])
+
+
+
+STARGATE = {
+    "bsc"       : ["0x55d398326f99059fF775485246999027B3197955"],
+    "avalanche" : ["0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7", "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"],
+    "arbitrum"  : ["0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9", "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8"],
+    "polygon"   : ["0xc2132D05D31c914a87C6611C10748AEb04B58e8F", "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"]
+}

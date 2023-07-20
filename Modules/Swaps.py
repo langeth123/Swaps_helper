@@ -62,6 +62,10 @@ def swap_handler(account: Account):
                 else:
                     availible_tokens = get_availible_tokens(account)
 
+                if len(availible_tokens) == 0:
+                    account.info(f'Zero availible tokens')
+                    return
+
                 random_token_in = random.choice(availible_tokens)
                 net_name = random_token_in["net_name"]
                 token_address = random_token_in["token_address"]
@@ -76,11 +80,52 @@ def swap_handler(account: Account):
                 tx = account.get_tx_data(get_w3(net_name), net_name)
                 tx["data"] = data["data"]
                 tx["to"] = Web3.to_checksum_address(data["to"])
-                tx["maxFeePerGas"] = round(tx["maxFeePerGas"] * 1.5)
 
                 hash = account.send_transaction(tx, net_name)
                 if account.wait_until_tx_finished(hash, net_name):
+                    sleeping(account.address)
                     break
 
             except Exception as error:
-                account.error(f'Handler: {error}')
+                if 'gas' in str(error).lower():
+                    break
+                else:
+                    account.error(f'Handler: {error}')
+                    sleeping(account.address)
+    
+    if SETTINGS["SwapInEnd"] is True:
+        while True:
+            try:
+                availible_tokens = get_availible_tokens(account)
+
+                if len(availible_tokens) == 0:
+                    account.info(f'Zero availible tokens')
+                    return
+
+                random_token_in = random.choice(availible_tokens)
+                net_name = random_token_in["net_name"]
+                token_address = random_token_in["token_address"]
+
+                random_token_out = random.choice(STARGATE[net_name])
+
+                to_swap_amount = random_token_in["balance"]
+            
+                data = get_swap_data(account, account.address, token_address, random_token_out, to_swap_amount, net_name)
+            
+                account.approve_token(token_address, net_name, Web3.to_checksum_address(data["to"]))
+
+                tx = account.get_tx_data(get_w3(net_name), net_name)
+                tx["data"] = data["data"]
+                tx["to"] = Web3.to_checksum_address(data["to"])
+
+                hash = account.send_transaction(tx, net_name)
+                if account.wait_until_tx_finished(hash, net_name):
+                    sleeping(account.address)
+                    break
+
+            except Exception as error:
+                if 'gas' in str(error).lower():
+                    break
+                else:
+                    account.error(f'End Handler: {error}')
+                    sleeping(account.address)
