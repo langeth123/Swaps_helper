@@ -163,11 +163,9 @@ class Account:
                         )
                         return tx
                     except Exception as error:
-
-                        import traceback
-                        print(traceback.format_exc())
                         logger.error(f'[{self.address}] Got error while trying approve token: {error}')
                         sleeping(f'[{self.address}] Error fault. Update after ')
+                        raise Exception("")
 
         contract, w3 = self.get_contract(token_address, net_name)
         while True:

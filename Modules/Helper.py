@@ -22,7 +22,7 @@ class DexInfo:
         self.session = requests.Session()
 
     def send_request(self, method: str, url: str, **kwargs) -> dict or None:
-        for _ in range(3):
+        for _ in range(1):
             try:
                 response = self.session.request(
                     method=method,

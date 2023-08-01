@@ -16,7 +16,7 @@ def get_availible_tokens(account: Account, first=False):
     parsed_res += "\n"
 
     for j in all_balances["tokens"]:
-        if j["balance"] > 0:
+        if j["balance"] / 10**j["decimal"] > 0.00005:
             availible_tokens.append(j)
         parsed_res += f'{j["net_name"].ljust(10)} - {j["token_name"].ljust(5)} - {round(j["balance"] / 10**j["decimal"], 4)}\n'
     
@@ -94,38 +94,41 @@ def swap_handler(account: Account):
                     sleeping(account.address)
     
     if SETTINGS["SwapInEnd"] is True:
-        while True:
+        availible_tokens = get_availible_tokens(account, first=True)
+
+        if len(availible_tokens) == 0:
+            account.info(f'Zero availible tokens')
+            return
+        
+        random.shuffle(availible_tokens)
+
+        for random_token_in in availible_tokens:
             try:
-                availible_tokens = get_availible_tokens(account)
-
-                if len(availible_tokens) == 0:
-                    account.info(f'Zero availible tokens')
-                    return
-
-                random_token_in = random.choice(availible_tokens)
                 net_name = random_token_in["net_name"]
                 token_address = random_token_in["token_address"]
 
-                random_token_out = random.choice(STARGATE[net_name])
+                if token_address not in STARGATE[net_name]:
 
-                to_swap_amount = random_token_in["balance"]
-            
-                data = get_swap_data(account, account.address, token_address, random_token_out, to_swap_amount, net_name)
-            
-                account.approve_token(token_address, net_name, Web3.to_checksum_address(data["to"]))
+                    if net_name in STARGATE.keys():
+                        random_token_out = random.choice(STARGATE[net_name])
 
-                tx = account.get_tx_data(get_w3(net_name), net_name)
-                tx["data"] = data["data"]
-                tx["to"] = Web3.to_checksum_address(data["to"])
+                        to_swap_amount = random_token_in["balance"]
+                    
+                        data = get_swap_data(account, account.address, token_address, random_token_out, to_swap_amount, net_name)
+                    
+                        account.approve_token(token_address, net_name, Web3.to_checksum_address(data["to"]))
 
-                hash = account.send_transaction(tx, net_name)
-                if account.wait_until_tx_finished(hash, net_name):
-                    sleeping(account.address)
-                    break
+                        tx = account.get_tx_data(get_w3(net_name), net_name)
+                        tx["data"] = data["data"]
+                        tx["to"] = Web3.to_checksum_address(data["to"])
+
+                        hash = account.send_transaction(tx, net_name)
+                        if account.wait_until_tx_finished(hash, net_name):
+                            sleeping(account.address)
 
             except Exception as error:
                 if 'gas' in str(error).lower():
-                    break
+                    continue
                 else:
                     account.error(f'End Handler: {error}')
                     sleeping(account.address)
